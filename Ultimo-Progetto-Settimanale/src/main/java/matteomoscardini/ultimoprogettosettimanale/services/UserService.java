@@ -20,6 +20,9 @@ public class UserService {
     @Autowired
     private UserDAO userDAO;
 
+    @Autowired
+    EventDAO eventDAO;
+
 
     public Page<User> getAllUsers(int page, int size, String sortBy) {
         if (size > 100 ) size = 100;
