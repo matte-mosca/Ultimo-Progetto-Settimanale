@@ -27,6 +27,9 @@ public class UserService {
     @Autowired
     EventDAO eventDAO;
 
+    @Autowired
+    PasswordEncoder bCrypt;
+
 
     public Page<User> getAllUsers(int page, int size, String sortBy) {
         if (size > 100 ) size = 100;
@@ -40,7 +43,7 @@ public class UserService {
                     throw new BadRequestException("The email "+user.getEmail()+ " is already used. Choose another email");
                 }
         );
-        User newUser = new User(body.name(), body.surname(),  body.email(), body.password());
+        User newUser = new User(body.name(), body.surname(),  body.email(), bCrypt.encode(body.password()));
         return userDAO.save(newUser);
 
     }
@@ -54,6 +57,7 @@ public class UserService {
             User found = optionalUser.get();
             found.setName(updatedUser.getName());
             found.setSurname(updatedUser.getSurname());
+            found.setEmail(updatedUser.getEmail());
 
             return this.userDAO.save(found);
         }else {
@@ -70,6 +74,23 @@ public class UserService {
             this.userDAO.delete(found);
         }else{
             throw new NotFoundException(id);
+        }
+    }
+
+    public User findByEmail (String email) {
+        return userDAO.findByEmail(email).orElseThrow(()-> new NotFoundException("There are no users with email: " + email));
+    }
+
+    public void addEvent(UUID userId, Event event){
+        User user = userDAO.findById(userId).orElseThrow(() -> new NotFoundException(userId));
+
+        {
+
+            event.getUsers().add(user);
+            user.getEvents().add(event);
+            userDAO.save(user);
+            eventDAO.save(event);
+
         }
     }
 }
