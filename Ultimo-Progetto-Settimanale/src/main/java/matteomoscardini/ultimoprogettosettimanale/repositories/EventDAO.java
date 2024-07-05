@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface EventDAO extends JpaRepository<Event, UUID> {
-    Optional<Event> findBytitle(String title);
+    Optional<Event> findByName(String name);
 }

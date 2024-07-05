@@ -7,5 +7,5 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserDAO extends JpaRepository<User, UUID> {
-    Optional<User> findByeMail(String email);
+    Optional<User> findByEmail(String email);
 }

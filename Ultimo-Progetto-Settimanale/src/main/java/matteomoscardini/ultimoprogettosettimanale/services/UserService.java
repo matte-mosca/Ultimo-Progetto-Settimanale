@@ -35,7 +35,7 @@ public class UserService {
     }
 
     public User save(NewUserPAyload body) throws BadRequestException {
-        this.userDAO.findByeMail(body.email()).ifPresent(
+        this.userDAO.findByEmail(body.email()).ifPresent(
                 user -> {
                     throw new BadRequestException("The email "+user.getEmail()+ " is already used. Choose another email");
                 }

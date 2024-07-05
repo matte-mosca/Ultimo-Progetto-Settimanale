@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 
 public record NewEventPayload (@NotEmpty(message = "Don't forget to set a Title for this Event!")
-                               String title,
+                               String name,
 
                                @NotEmpty(message = "Don't forget to descripe the Event!")
                                @Size(min = 3, max = 30, message = "The first must be between 10 and 150 characters")

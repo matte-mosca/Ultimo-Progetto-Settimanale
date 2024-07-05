@@ -33,13 +33,13 @@ public class EventService {
     }
 
     public Event save(NewEventPayload body) throws BadRequestException {
-        this.eventDAO.findBytitle(body.title()).ifPresent(
+        this.eventDAO.findByName(body.name()).ifPresent(
                 event -> {
-                    throw new BadRequestException("This Event " + body.title() + " is already created");
+                    throw new BadRequestException("This Event " + body.name() + " is already created");
 
                 }
         );
-        Event newEvent = new Event(body.title(), body.description(), body.date(), body.location(), body.nPartecipants());
+        Event newEvent = new Event(body.name(), body.description(), body.date(), body.location(), body.nPartecipants());
         return eventDAO.save(newEvent);
 
     }
