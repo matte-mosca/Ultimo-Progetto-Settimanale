@@ -38,6 +38,14 @@ public class User implements UserDetails {
     inverseJoinColumns = @JoinColumn(name = "event_id"))
     private List<Event> events = new ArrayList<>();
 
+    public User(String name, String surname, String email, String password) {
+        this.name = name;
+        this.surname = surname;
+        this.email = email;
+        this.password = password;
+        this.role = Role.EVENT_PLANNER;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role.name()));
