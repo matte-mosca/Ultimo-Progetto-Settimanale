@@ -3,6 +3,7 @@ package matteomoscardini.ultimoprogettosettimanale.services;
 import matteomoscardini.ultimoprogettosettimanale.entities.Event;
 import matteomoscardini.ultimoprogettosettimanale.entities.User;
 import matteomoscardini.ultimoprogettosettimanale.exceptions.BadRequestException;
+import matteomoscardini.ultimoprogettosettimanale.exceptions.NotFoundException;
 import matteomoscardini.ultimoprogettosettimanale.payloads.NewUserPAyload;
 import matteomoscardini.ultimoprogettosettimanale.repositories.EventDAO;
 import matteomoscardini.ultimoprogettosettimanale.repositories.UserDAO;
@@ -13,6 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -38,5 +42,34 @@ public class UserService {
         );
         User newUser = new User(body.name(), body.surname(),  body.email(), body.password());
         return userDAO.save(newUser);
+
+    }
+    public User findById(UUID userId){
+        return this.userDAO.findById(userId).orElseThrow(() -> new NotFoundException(userId));
+    }
+
+    public User findUserByIdAndUpdate(UUID id, User updatedUser){
+        Optional<User> optionalUser = userDAO.findById(id);
+        if (optionalUser.isPresent()){
+            User found = optionalUser.get();
+            found.setName(updatedUser.getName());
+            found.setSurname(updatedUser.getSurname());
+
+            return this.userDAO.save(found);
+        }else {
+            throw new NotFoundException(id);
+        }
+
+
+    }
+
+    public void findUserByIdAndDelete(UUID id){
+        Optional<User> optionalUser = userDAO.findById(id);
+        if (optionalUser.isPresent()){
+            User found = optionalUser.get();
+            this.userDAO.delete(found);
+        }else{
+            throw new NotFoundException(id);
+        }
     }
 }

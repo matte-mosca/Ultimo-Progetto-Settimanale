@@ -3,6 +3,7 @@ package matteomoscardini.ultimoprogettosettimanale.services;
 
 import matteomoscardini.ultimoprogettosettimanale.entities.Event;
 import matteomoscardini.ultimoprogettosettimanale.exceptions.BadRequestException;
+import matteomoscardini.ultimoprogettosettimanale.exceptions.NotFoundException;
 import matteomoscardini.ultimoprogettosettimanale.payloads.NewEventPayload;
 import matteomoscardini.ultimoprogettosettimanale.repositories.EventDAO;
 import matteomoscardini.ultimoprogettosettimanale.repositories.UserDAO;
@@ -12,6 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class EventService {
@@ -39,4 +43,36 @@ public class EventService {
         return eventDAO.save(newEvent);
 
     }
+
+    public Event findEventById(UUID id){
+        return eventDAO.findById(id).orElseThrow(() -> new NotFoundException(id));
+
+    }
+
+    public Event findEventByIdAndUpdate(UUID id, Event updatedEvent){
+        Optional<Event> optionalEvent = eventDAO.findById(id);
+        if (optionalEvent.isPresent()){
+            Event found = optionalEvent.get();
+            found.setName(updatedEvent.getName());
+            found.setDescription(updatedEvent.getDescription());
+            found.setDate(updatedEvent.getDate());
+            found.setLocation(updatedEvent.getLocation());
+            found.setNPartecipants(updatedEvent.getNPartecipants());
+
+            return this.eventDAO.save(found);
+        }else {
+            throw new NotFoundException(id);
+        }
+    }
+
+    public void findEventByIdAndDelete(UUID id){
+        Optional<Event> optionalEvent = eventDAO.findById(id);
+        if (optionalEvent.isPresent()){
+            Event found = optionalEvent.get();
+            this.eventDAO.delete(found);
+        }else{
+            throw new NotFoundException(id);
+        }
+    }
+
 }
